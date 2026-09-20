@@ -1,0 +1,506 @@
+/* ============================================================
+   For Aly · a little scrapbook in the browser
+   ============================================================ */
+
+:root {
+  --cream: #fdf6ec;
+  --cream-2: #fbf0e1;
+  --beige: #f3e4d3;
+  --blush: #f6c9d1;
+  --blush-2: #efb0be;
+  --pink: #e8a0b4;
+  --rose: #d9869c;
+  --rose-deep: #c56f89;
+  --brown: #5f4438;
+  --brown-soft: #8a6a5d;
+  --brown-faint: #b9a090;
+  --ink: #594136;
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-hand: 'Caveat', 'Comic Sans MS', cursive;
+  --font-script: 'Dancing Script', cursive;
+  --font-great: 'Great Vibes', cursive;
+
+  --pw: clamp(300px, 78vw, 420px); /* page width  */
+  --ph: calc(var(--pw) * 1.7); /* page height */
+
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.55 0 0 0 0 0.42 0 0 0 0 0.38 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-serif);
+  color: var(--ink);
+  background: #fbecef;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  width: 100%;
+}
+
+/* ------------------------------------------------------------
+   Stage — fixed full-screen world behind everything
+   ------------------------------------------------------------ */
+.stage {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 18% 12%, rgba(246, 201, 209, 0.55) 0%, rgba(253, 246, 236, 0) 52%),
+    radial-gradient(110% 100% at 88% 82%, rgba(239, 176, 190, 0.5) 0%, rgba(253, 246, 236, 0) 55%),
+    radial-gradient(90% 80% at 82% 10%, rgba(255, 247, 224, 0.9) 0%, rgba(253, 246, 236, 0) 60%),
+    linear-gradient(160deg, #fdeef1 0%, #fdf6ec 48%, #fbeee2 100%);
+}
+
+.stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-grain);
+  opacity: 0.5;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* soft blurred colour blobs that drift very slowly */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+}
+.blob-a {
+  width: 46vmax;
+  height: 46vmax;
+  left: -14vmax;
+  top: -10vmax;
+  background: rgba(239, 176, 190, 0.55);
+  animation: drift 26s ease-in-out infinite alternate;
+}
+.blob-b {
+  width: 40vmax;
+  height: 40vmax;
+  right: -12vmax;
+  bottom: -16vmax;
+  background: rgba(246, 201, 209, 0.6);
+  animation: drift 32s ease-in-out infinite alternate-reverse;
+}
+.blob-c {
+  width: 26vmax;
+  height: 26vmax;
+  left: 34vw;
+  top: 58vh;
+  background: rgba(255, 244, 214, 0.7);
+  animation: drift 22s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6vmax, -5vmax, 0) scale(1.12);
+  }
+}
+
+/* ------------------------------------------------------------
+   Floating hearts, sparkles, petals
+   ------------------------------------------------------------ */
+.part {
+  position: absolute;
+  bottom: -6vh;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform, opacity;
+  animation-name: rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.part--heart {
+  color: rgba(217, 134, 156, 0.5);
+}
+.part--spark {
+  color: rgba(197, 111, 137, 0.65);
+}
+.part--petal {
+  color: rgba(239, 176, 190, 0.6);
+  animation-name: flutter;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) translateX(0) rotate(-6deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--po, 0.5);
+  }
+  60% {
+    opacity: var(--po, 0.5);
+  }
+  85% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(-112vh) translateX(var(--sway, 0px)) rotate(14deg);
+    opacity: 0;
+  }
+}
+
+@keyframes flutter {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg) scaleX(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateY(-56vh) translateX(var(--sway, 0px)) rotate(38deg) scaleX(1.6);
+  }
+  100% {
+    transform: translateY(-112vh) translateX(var(--sway, 0px)) rotate(12deg) scaleX(1.1);
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------
+   Paper texture helper
+   ------------------------------------------------------------ */
+.paper-texture {
+  position: relative;
+}
+.paper-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-image: var(--paper-grain);
+  opacity: 0.34;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* ------------------------------------------------------------
+   The booked world (3D)
+   ------------------------------------------------------------ */
+.world {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 2400px;
+  perspective-origin: 50% 42%;
+}
+
+.camera {
+  position: relative;
+  flex: 0 0 auto;
+  width: calc(var(--pw) * 2);
+  height: var(--ph);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.book {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+/* the "spread" that can slide to recenter the closed book */
+.sheet {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.page {
+  position: absolute;
+  top: 0;
+  width: var(--pw);
+  height: var(--ph);
+  background: linear-gradient(120deg, #fffdf7 0%, #fdf5e6 68%, #f6ecd8 100%);
+  box-shadow:
+    inset 0 0 90px rgba(122, 90, 60, 0.08),
+    0 22px 60px -18px rgba(122, 90, 60, 0.35);
+  overflow: hidden;
+}
+
+.page--left {
+  left: 0;
+  transform: translateZ(2px);
+  border-radius: 4px 0 0 4px;
+  box-shadow:
+    inset 0 0 90px rgba(122, 90, 60, 0.08),
+    inset -26px 0 44px -30px rgba(122, 90, 60, 0.3),
+    10px 22px 60px -18px rgba(122, 90, 60, 0.4);
+}
+
+.page--right {
+  left: var(--pw);
+  transform: translateZ(1px);
+  border-radius: 0 4px 4px 0;
+  box-shadow:
+    inset 0 0 90px rgba(122, 90, 60, 0.08),
+    inset 26px 0 44px -30px rgba(122, 90, 60, 0.3),
+    -10px 22px 60px -18px rgba(122, 90, 60, 0.4);
+}
+
+/* the centre spine crease */
+.spine-shade {
+  position: absolute;
+  top: 0;
+  left: calc(var(--pw) - 1px);
+  width: 26px;
+  height: 100%;
+  transform: translateX(-50%) translateZ(1px);
+  background: linear-gradient(90deg, rgba(122, 90, 60, 0.16), rgba(122, 90, 60, 0) 78%);
+  pointer-events: none;
+  z-index: 3;
+  border-radius: 50%;
+}
+
+/* ------------------------------------------------------------
+   The moving cover (hinged at the spine)
+   ------------------------------------------------------------ */
+.cover {
+  position: absolute;
+  top: 0;
+  left: var(--pw);
+  width: var(--pw);
+  height: var(--ph);
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  border-radius: 6px 10px 10px 6px;
+  z-index: 10;
+}
+
+.cover__face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.cover__back {
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(120deg, #f9e8e4 0%, #f3d9d4 100%);
+  box-shadow:
+    inset 0 0 60px rgba(140, 90, 80, 0.18),
+    inset 10px 0 24px rgba(140, 90, 80, 0.14);
+}
+
+.cover-face-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(140% 120% at 18% 8%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 45%),
+    radial-gradient(120% 100% at 85% 95%, rgba(190, 90, 118, 0.35) 0%, rgba(190, 90, 118, 0) 60%),
+    linear-gradient(120deg, #e9a1b4 0%, #e58fa6 45%, #dc809a 100%);
+  box-shadow:
+    inset 0 0 46px rgba(140, 70, 92, 0.4),
+    inset 0 0 6px rgba(120, 60, 80, 0.5);
+}
+
+/* ------------------------------------------------------------
+   Page padding + inner layout
+   ------------------------------------------------------------ */
+.page__inner {
+  position: relative;
+  height: 100%;
+  padding: calc(var(--pw) * 0.075) 6% calc(var(--pw) * 0.075) 8.5%;
+  display: flex;
+  flex-direction: column;
+}
+
+.page--right .page__inner {
+  padding-left: 7%;
+  padding-right: 7%;
+}
+
+/* ------------------------------------------------------------
+   Typography helpers
+   ------------------------------------------------------------ */
+.title-great {
+  font-family: var(--font-great);
+  color: var(--rose-deep);
+  font-weight: 400;
+  line-height: 1.15;
+}
+.title-hand {
+  font-family: var(--font-hand);
+  color: var(--brown-soft);
+  font-weight: 600;
+}
+.hand {
+  font-family: var(--font-hand);
+}
+.serif {
+  font-family: var(--font-serif);
+}
+
+/* ------------------------------------------------------------
+   Buttons / hints / chips
+   ------------------------------------------------------------ */
+.cta {
+  padding: 12px 26px 14px;
+  border-radius: 999px;
+  background: rgba(255, 250, 243, 0.85);
+  border: 1.5px solid rgba(217, 134, 156, 0.45);
+  color: var(--rose-deep);
+  font-family: var(--font-hand);
+  font-size: clamp(20px, 2.6vw, 26px);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 24px -10px rgba(197, 111, 137, 0.45);
+  backdrop-filter: blur(4px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+.cta:hover {
+  transform: translateY(-2px) scale(1.04);
+  background: #fffdf8;
+  box-shadow: 0 14px 30px -10px rgba(197, 111, 137, 0.55);
+}
+.cta:active {
+  transform: scale(0.97);
+}
+
+.float-hint {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: clamp(18px, 5vh, 44px);
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+}
+
+.click-hint {
+  font-family: var(--font-hand);
+  color: var(--brown-soft);
+  font-size: clamp(18px, 2.4vw, 24px);
+  opacity: 0.85;
+  position: relative;
+}
+.click-hint::after {
+  content: '';
+  position: absolute;
+  left: 20%;
+  right: 20%;
+  bottom: -6px;
+  height: 10px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='8' viewBox='0 0 40 8'%3E%3Cpath d='M2 6 C 12 1, 28 1, 38 5' stroke='%23d9869c' stroke-width='2.2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")
+    no-repeat center / cover;
+  opacity: 0.8;
+}
+
+/* ------------------------------------------------------------
+   Little details
+   ------------------------------------------------------------ */
+.divider-scrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 82%;
+  margin: 10px auto 0;
+}
+.divider-scrap::before,
+.divider-scrap::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(197, 111, 137, 0.4), transparent);
+}
+.divider-scrap span {
+  font-size: 16px;
+  color: var(--rose);
+}
+
+.music-note-left {
+  position: fixed;
+  z-index: 45;
+  top: 18px;
+  right: 20px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 250, 243, 0.8);
+  border: 1.5px solid rgba(217, 134, 156, 0.45);
+  color: var(--rose-deep);
+  font-size: 21px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 20px -10px rgba(197, 111, 137, 0.5);
+  backdrop-filter: blur(4px);
+  transition: transform 0.25s ease;
+}
+.music-note-left:hover {
+  transform: scale(1.08);
+}
+
+/* blinking caret used at the end of the typed letter */
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: var(--rose-deep);
+  animation: blink 0.9s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
